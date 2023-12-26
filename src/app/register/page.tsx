@@ -303,7 +303,7 @@ const Register = () => {
                       Select your option
                     </option>
                     {countries?.map((ctr: any) => (
-                      <option value={ctr.name}>{ctr.name}</option>
+                      <option key ={ctr.name} value={ctr.name}>{ctr.name}</option>
                     ))}
                   </select>
                 </div>
@@ -321,7 +321,7 @@ const Register = () => {
                       Select your option
                     </option>
                     {states?.map((ctr: any) => (
-                      <option value={ctr.name}>{ctr.name}</option>
+                      <option  key ={ctr.name} value={ctr.name}>{ctr.name}</option>
                     ))}
                   </select>
                 </div>
@@ -338,7 +338,7 @@ const Register = () => {
                       Select your option
                     </option>
                     {cities?.map((ctr: any) => (
-                      <option value={ctr}>{ctr}</option>
+                      <option  key ={ctr} value={ctr}>{ctr}</option>
                     ))}
                   </select>
                 </div>
