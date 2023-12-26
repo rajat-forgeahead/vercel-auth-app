@@ -246,7 +246,7 @@ const UserProfile = () => {
                     Select your option
                   </option>
                   {countries?.map((ctr) => (
-                    <option key={ctr.name} value={ctr.name}>
+                    <option  key={ctr.name} value={ctr.name}>
                       {ctr.name}
                     </option>
                   ))}

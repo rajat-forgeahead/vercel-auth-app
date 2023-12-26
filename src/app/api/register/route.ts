@@ -3,11 +3,6 @@ import connect from "@/utils/db";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
-export const config = {
-  api: {
-    bodyParser: true, // Enable default bodyParser for handling JSON data
-  },
-};
 
 export const POST = async (request: any, response: any) => {
   const { email, password, bio, phone_number, address, country, city, state } = await request.json();
