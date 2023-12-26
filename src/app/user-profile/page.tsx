@@ -1,12 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { countries } from "@/utils/countryData";
 import { useRouter } from "next/router";
 import withAuth from "@/utils/session";
+
 const UserProfile = () => {
   const [userData, setUserData] = useState({});
-  const { data: session, status: sessionStatus } = useSession();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -14,32 +15,27 @@ const UserProfile = () => {
   const [imageSrc, setImageSrc] = useState("");
   const [email, setEmail] = useState("");
   const [file, setFile] = useState(null);
-  //   const router = useRouter();
   const [bio, setBio] = useState();
   const [address, setAddress] = useState();
   const [country, setCountry] = useState();
   const [city, setCity] = useState();
   const [state, setUserState] = useState();
   const [phone_number, setPhone_number] = useState();
+  const [editMode, setEditMode] = useState(false);
 
-  const handleFileChange = (event: any) => {
+  const handleFileChange = (event) => {
     const file = event?.target?.files[0];
-    console.log("enail", file);
     if (file) {
       const reader = new FileReader();
 
       reader.onloadend = () => {
         const base64String = reader?.result?.split(",")[1];
-        console.log("file", base64String);
         setImageSrc(base64String);
       };
 
       // Read the image file as a data URL
       reader.readAsDataURL(file);
     }
-  };
-  const handleEmailChange = (e: any) => {
-    setEmail(e.target.value);
   };
   const mystyle = {
     display: "flex",
@@ -49,7 +45,12 @@ const UserProfile = () => {
     height: "100%",
     "background-color": "lightgray",
   };
-  const handleCountrySelect = (e: any) => {
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleCountrySelect = (e) => {
     setCountry(e.target.value);
     const selectedCountry = countries?.find(
       (ctr) => ctr.name === e.target.value
@@ -57,24 +58,20 @@ const UserProfile = () => {
     const selectedStates = selectedCountry?.states;
     setStates(selectedStates);
   };
-  const handleStateSelect = (e: any) => {
+
+  const handleStateSelect = (e) => {
     setUserState(e.target.value);
-    const selectedState = states?.find(
-      (ctr: any) => ctr?.name === e.target.value
-    );
+    const selectedState = states?.find((ctr) => ctr?.name === e.target.value);
     const selectedCity = selectedState?.cities;
-    console.log(selectedCity);
     setCities(selectedCity);
   };
 
   useEffect(() => {
     let key = session?.user?.email + "data";
-    console.log("session", session);
     let userImg = session?.user?.email;
     const storedImage = localStorage.getItem(userImg || "");
-    const data: any = localStorage.getItem(key);
-    let userData: any = JSON.parse(data);
-    console.log("storedImage-", storedImage);
+    const data = localStorage.getItem(key);
+    let userData = JSON.parse(data);
     if (data) {
       setUserData(JSON.parse(data));
       setEmail(userData.email);
@@ -92,12 +89,7 @@ const UserProfile = () => {
     }
   }, [session]);
 
-  console.log("data-", userData);
-
-  if (!userData) {
-    return <p>No user data found</p>;
-  }
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const bio = e.target.bio.value;
@@ -106,7 +98,7 @@ const UserProfile = () => {
     const country = e.target.country.value;
     const city = e.target.city.value;
     const state = e.target.state.value;
-    const userData: any = {
+    const userData = {
       email: email,
       bio: bio,
       phone_number: phone_number,
@@ -118,14 +110,14 @@ const UserProfile = () => {
     let key = email + "data";
     localStorage.setItem(key, JSON.stringify(userData));
     if (imageSrc) {
-      // Save base64 string to local storage
       localStorage.setItem(email, imageSrc);
-
-      // reader.readAsDataURL(image);
     }
+    setEditMode(false);
     window.alert("Updated User Information successfully");
   };
-
+  const handleEditClick = () => {
+    setEditMode(!editMode);
+  };
   return (
     <section>
       <div
@@ -142,7 +134,12 @@ const UserProfile = () => {
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 bg-gray-10">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Update user information
+              <button
+                onClick={handleEditClick}
+                className="w-full text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              >
+                {editMode ? "Cancel Edit" : "Edit"}
+              </button>
             </h1>
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
@@ -158,6 +155,7 @@ const UserProfile = () => {
                   placeholder="name@company.com"
                   onChange={(e: any) => setEmail(e.target.value)}
                   required
+                  disabled={!editMode}
                 />
               </div>
               <div>
@@ -181,14 +179,8 @@ const UserProfile = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
+                  disabled={!editMode}
                 />
-                {/* <h1>Upload Profile Picture</h1>
-                    {image && <img src={image} alt="Uploaded" width={200} />}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    /> */}
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -203,6 +195,7 @@ const UserProfile = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="1234567890"
                   required
+                  disabled={!editMode}
                 />
               </div>
               <div>
@@ -217,6 +210,7 @@ const UserProfile = () => {
                   placeholder="abc"
                   onChange={(e: any) => setBio(e.target.value)}
                   required
+                  disabled={!editMode}
                 />
               </div>
 
@@ -231,7 +225,9 @@ const UserProfile = () => {
                   value={address}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="street"
+                  onChange={(e: any) => setAddress(e.target.value)}
                   required
+                  disabled={!editMode}
                 />
               </div>
               <div>
@@ -244,64 +240,114 @@ const UserProfile = () => {
                   value={country}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={handleCountrySelect}
+                  disabled={!editMode}
                 >
                   <option disabled selected>
                     Select your option
                   </option>
-                  {countries?.map((ctr: any) => (
-                    <option value={ctr.name}>{ctr.name}</option>
+                  {countries?.map((ctr) => (
+                    <option key={ctr.name} value={ctr.name}>
+                      {ctr.name}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Select your State
-                </label>
-                <select
-                  id="state"
-                  name="state"
-                  value={state}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={handleStateSelect}
-                >
-                  <option disabled selected>
-                    Select your option
-                  </option>
-                  {states?.map((ctr: any) => (
-                    <option value={ctr.name}>{ctr.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Select your City
-                </label>
-                <select
-                  id="city"
-                  name="city"
-                  value={city}
-                  onChange={(e: any) => setCity(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
-                  <option disabled selected>
-                    Select your option
-                  </option>
-                  {cities &&
-                    Array.isArray(cities) &&
-                    cities.map((ctr: any) => (
-                      <option key={ctr} value={ctr}>
-                        {ctr}
+                {!editMode ? (
+                  <>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Your city
+                    </label>
+                    <input
+                      type="text"
+                      name="state"
+                      id="state"
+                      value={state}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="street"
+                      required
+                      disabled={true}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Select your State
+                    </label>
+                    <select
+                      id="state"
+                      name="state"
+                      value={state}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      onChange={handleStateSelect}
+                    >
+                      <option disabled selected>
+                        Select your option
                       </option>
-                    ))}
-                </select>
+                      {states?.map((ctr: any) => (
+                        <option key={ctr.name} value={ctr.name}>
+                          {ctr.name}
+                        </option>
+                      ))}
+                    </select>
+                  </>
+                )}
+              </div>
+
+              <div>
+                {!editMode ? (
+                  <>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Your city
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      id="city"
+                      value={city}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="street"
+                      required
+                      disabled={true}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Select your City
+                    </label>
+                    <select
+                      id="city"
+                      name="city"
+                      value={city}
+                      onChange={(e: any) => setCity(e.target.value)}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option disabled selected>
+                        Select your option
+                      </option>
+                      {cities &&
+                        Array.isArray(cities) &&
+                        cities.map((ctr) => (
+                          <option key={ctr} value={ctr}>
+                            {ctr}
+                          </option>
+                        ))}
+                    </select>
+                  </>
+                )}
               </div>
               <p className="text-red-600 text-[16px] mb-4">{error && error}</p>
 
               <button
                 type="submit"
-                className="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className={`w-full text-white ${
+                  editMode
+                    ? "bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300"
+                    : "bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300"
+                } font-medium rounded-lg text-sm px-5 py-2.5 text-center`}
               >
-                Update
+                {editMode ? "Save Changes" : "Update"}
               </button>
             </form>
           </div>

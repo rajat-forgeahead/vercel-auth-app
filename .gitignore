@@ -33,7 +33,14 @@ build
 
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
-node_modules
 
 # Ignore build files
-public
+# Ignore Next.js cache
+.next/
+
+# Ignore Webpack build output
+dist/
+build/
+
+# Ignore static files (output of next build)
+out/
