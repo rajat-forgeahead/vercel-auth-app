@@ -2,10 +2,11 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
+// import { ThemeProvider } from 'next-themes';
 import { getServerSession } from "next-auth";
 import SessionProvider from "@/utils/SessionProvider";
 import {UserProvider} from "@/utils/userContext"
+import {ThemeProvider} from "@/context/ThemeContext"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <ThemeProvider>
         <SessionProvider session={session}>
           <div className="mx-auto">
           <UserProvider>
@@ -30,6 +32,7 @@ export default async function RootLayout({
             </UserProvider>
           </div>
         </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { countries } from "@/utils/countryData";
+import { useTheme } from "next-themes";
 const Register = () => {
   const [error, setError] = useState("");
   const router = useRouter();
@@ -17,6 +18,11 @@ const [cities, setCities] = useState([] as string[]);
   const [file, setFile] = useState(null);
   const [imageBase64, setImageBase64] = useState('');
   const [city, setCity] = useState();
+  const { systemTheme, theme, setTheme } = useTheme();
+  const currentTheme = theme === 'system' ? systemTheme : theme;
+  const darkModeClass = 'text-white';
+  const lightModeClass = 'text-black';
+  const textColorClass = currentTheme === 'dark' ? darkModeClass : lightModeClass;
   const handleFileChange = (event:any) => {
     console.log("enail",email)
     const image = event.target.files[0];
@@ -46,7 +52,7 @@ const [cities, setCities] = useState([] as string[]);
     "justify-content": "flex-start",
     padding: "20px",
     height: "100%",
-    "background-color": "lightgray",
+ 
   };
 
 
@@ -176,7 +182,7 @@ const [cities, setCities] = useState([] as string[]);
     sessionStatus !== "authenticated" && (
       <section>
         <div
-          className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 h-full w-full"
+          className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 h-full w-full bg-none"
           style={mystyle}
         >
           <a
@@ -184,7 +190,7 @@ const [cities, setCities] = useState([] as string[]);
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white pt-2.5"
           >
             <img className="w-8 h-8 mr-2" src="/images/signup.png" alt="logo" />
-            Signup
+              <span className={textColorClass}>Signup</span>  
           </a>
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 bg-gray-10">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

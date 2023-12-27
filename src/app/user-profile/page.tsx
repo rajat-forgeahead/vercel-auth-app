@@ -7,6 +7,7 @@ import withAuth from "@/utils/session";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {UserContext} from "@/utils/userContext"
+import { useTheme } from "next-themes";
 
 const UserProfile = () => {
   const { updatePhotoChanged } = useContext(UserContext);
@@ -26,7 +27,12 @@ const [cities, setCities] = useState([] as string[]);
   const [state, setUserState] = useState();
   const [phone_number, setPhone_number] = useState();
   const [editMode, setEditMode] = useState(false);
-
+  const darkModeClass = 'text-white';
+  const lightModeClass = 'text-black';
+  const { systemTheme, theme, setTheme } = useTheme();
+  const currentTheme = theme === 'system' ? systemTheme : theme;
+  // Conditionally set the text color class based on the current theme
+  const textColorClass = currentTheme === 'dark' ? darkModeClass : lightModeClass;
   const handleFileChange = (event:any) => {
     const file = event?.target?.files[0];
     if (file) {
@@ -49,7 +55,7 @@ const [cities, setCities] = useState([] as string[]);
     "justify-content": "flex-start",
     padding: "20px",
     height: "100%",
-    "background-color": "lightgray",
+   
   };
 
   const handleEmailChange = (e:any) => {
@@ -156,10 +162,10 @@ const [cities, setCities] = useState([] as string[]);
   };
 
   return (
-    <section>
+    <section className="bg-none">
        <ToastContainer />
       <div
-        className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 h-full w-full"
+        className="flex flex-col items-center justify-center bg-none"
         style={mystyle}
       >
         <a
@@ -167,7 +173,7 @@ const [cities, setCities] = useState([] as string[]);
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white pt-2.5"
         >
           <img className="w-8 h-8 mr-2" src="/images/update.png" alt="logo" />
-          User Profile
+          <span className={textColorClass}>User Profile</span>  
         </a>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 bg-gray-10">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
