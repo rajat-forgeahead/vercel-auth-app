@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 
 import { getServerSession } from "next-auth";
 import SessionProvider from "@/utils/SessionProvider";
-
+import {UserProvider} from "@/utils/userContext"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,8 +24,10 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SessionProvider session={session}>
           <div className="mx-auto">
+          <UserProvider>
             <Navbar />
             {children}
+            </UserProvider>
           </div>
         </SessionProvider>
       </body>

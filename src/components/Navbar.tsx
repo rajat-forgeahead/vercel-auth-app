@@ -1,21 +1,27 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { deleteCookie } from "cookies-next";
-
+import {UserContext } from "@/utils/userContext"
 const Navbar = () => {
+  const { photoChanged } = useContext(UserContext);
   const { data: session } = useSession();
   const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
+    console.log("phtot--",photoChanged )
     let userImg = session?.user?.email;
     const storedImage = localStorage.getItem(userImg||""); // Replace 'myImage' with your key
     // Update state with the image string
     if (storedImage) {
       setImageSrc(storedImage);
     }
-  }, [session]);
+    if (photoChanged) {
+      const Image:any = localStorage.getItem(userImg||"")
+      setImageSrc(Image);
+    }
+  }, [session,photoChanged]);
   return (
     <div className="bg-white shadow-md">
       {" "}

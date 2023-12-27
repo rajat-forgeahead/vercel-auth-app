@@ -8,13 +8,15 @@ const Register = () => {
   const [error, setError] = useState("");
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [userImage, setImage] = useState(null);
+  const [states, setStates] = useState([] as {
+    name: string;
+    cities: string[];
+}[]); 
+const [cities, setCities] = useState([] as string[]); 
   const [email, setEmail] = useState("");
   const [file, setFile] = useState(null);
   const [imageBase64, setImageBase64] = useState('');
-
+  const [city, setCity] = useState();
   const handleFileChange = (event:any) => {
     console.log("enail",email)
     const image = event.target.files[0];
@@ -47,11 +49,7 @@ const Register = () => {
     "background-color": "lightgray",
   };
 
-  interface Country {
-    name: string;
-    states: string[]; // Assuming states is an array of strings, change this type accordingly if it differs
-    // Add other properties if necessary
-  }
+
   useEffect(() => {
     if (sessionStatus === "authenticated") {
       router.replace("/dashboard");
@@ -62,21 +60,27 @@ const Register = () => {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailRegex.test(email);
   };
+  const isValidPassword = (password:string) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s])(.{8,})$/;
+    return passwordRegex.test(password);
+  };
 
   const handleCountrySelect = (e: any) => {
     const selectedCountry = countries?.find(
       (ctr) => ctr.name === e.target.value
     );
     const selectedStates = selectedCountry?.states;
-    setStates(selectedStates);
+    if (selectedStates !== undefined) {
+      setStates(selectedStates);}
   };
   const handleStateSelect = (e: any) => {
     const selectedState = states?.find(
       (ctr: any) => ctr?.name === e.target.value
     );
     const selectedCity = selectedState?.cities;
-    console.log(selectedCity);
-    setCities(selectedCity);
+    if (selectedCity !== undefined) {
+      setCities(selectedCity);
+      }
   };
 
   const handleSubmit = async (e: any) => {
@@ -98,9 +102,8 @@ const Register = () => {
        return;
       }
     }
-    console.log("file",file)
+  
     if (file) {
-      console.log("file",file)
       const reader:any = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result.split(',')[1];
@@ -114,7 +117,10 @@ const Register = () => {
       setError("Email is invalid");
       return;
     }
-
+    if (!isValidPassword(password)) {
+      setError("Password must be at least 8 characters long and contain at least one special character and one uppercase letter.");
+      return;
+    }
     if (!password || password.length < 8) {
       setError("Password is invalid");
       return;
@@ -190,7 +196,9 @@ const Register = () => {
                  
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Your email
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
+                  
                   <input
                     type="email"
                     name="email"
@@ -202,6 +210,7 @@ const Register = () => {
                     required
                   />
                 </div>
+               
                 <div>
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                       Upload file
@@ -228,6 +237,7 @@ const Register = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Your phone no.
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
                   <input
                     type="number"
@@ -241,6 +251,7 @@ const Register = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Your bio
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
                   <textarea
                     name="bio"
@@ -253,6 +264,7 @@ const Register = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Password
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
                   <input
                     type="password"
@@ -263,9 +275,13 @@ const Register = () => {
                     required
                   />
                 </div>
+                <p className="text-red-600 text-[16px] mb-4">
+                  {error && error}
+                </p>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                    Confirm Password
+                   <span style={{ color: 'red' }}>*</span>
                   </label>
                   <input
                     type="confirm_password"
@@ -276,9 +292,11 @@ const Register = () => {
                     required
                   />
                 </div>
+
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Your Address
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
                   <input
                     type="text"
@@ -292,15 +310,17 @@ const Register = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Select your country
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
                   <select
                     id="country"
                     name="country"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     onChange={handleCountrySelect}
+                    required
                   >
                     <option disabled selected>
-                      Select your option
+                   
                     </option>
                     {countries?.map((ctr: any) => (
                       <option key ={ctr.name} value={ctr.name}>{ctr.name}</option>
@@ -310,6 +330,7 @@ const Register = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Select your State
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
                   <select
                     id="state"
@@ -318,7 +339,7 @@ const Register = () => {
                     onChange={handleStateSelect}
                   >
                     <option disabled selected>
-                      Select your option
+              
                     </option>
                     {states?.map((ctr: any) => (
                       <option  key ={ctr.name} value={ctr.name}>{ctr.name}</option>
@@ -328,20 +349,23 @@ const Register = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Select your City
+                    <span style={{ color: 'red' }}>*</span>
                   </label>
                   <select
                     id="city"
                     name="city"
+                    onChange={(e: any) => setCity(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option disabled selected>
-                      Select your option
+               
                     </option>
                     {cities?.map((ctr: any) => (
                       <option  key ={ctr} value={ctr}>{ctr}</option>
                     ))}
                   </select>
                 </div>
+            
                 <p className="text-red-600 text-[16px] mb-4">
                   {error && error}
                 </p>

@@ -1,20 +1,24 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useSession } from "next-auth/react";
 import { countries } from "@/utils/countryData";
 import { useRouter } from "next/router";
 import withAuth from "@/utils/session";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {UserContext} from "@/utils/userContext"
 
 const UserProfile = () => {
+  const { updatePhotoChanged } = useContext(UserContext);
   const [userData, setUserData] = useState({});
   const { data: session } = useSession();
-  const [loading, setLoading] = useState(true);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [error, setError] = useState("");
+  const [states, setStates] = useState([] as {
+    name: string;
+    cities: string[];
+}[]); 
+const [cities, setCities] = useState([] as string[]); 
   const [imageSrc, setImageSrc] = useState("");
   const [email, setEmail] = useState("");
-  const [file, setFile] = useState(null);
   const [bio, setBio] = useState();
   const [address, setAddress] = useState();
   const [country, setCountry] = useState();
@@ -23,14 +27,16 @@ const UserProfile = () => {
   const [phone_number, setPhone_number] = useState();
   const [editMode, setEditMode] = useState(false);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event:any) => {
     const file = event?.target?.files[0];
     if (file) {
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        const base64String = reader?.result?.split(",")[1];
+        let renString:any = reader?.result;
+        const base64String = renString.split(",")[1];
         setImageSrc(base64String);
+   
       };
 
       // Read the image file as a data URL
@@ -46,31 +52,50 @@ const UserProfile = () => {
     "background-color": "lightgray",
   };
 
-  const handleEmailChange = (e) => {
+  const handleEmailChange = (e:any) => {
     setEmail(e.target.value);
   };
+  const handleRemovePhoto = () => {
+    let user:any = session?.user?.email
+    // Remove image from local storage
+    localStorage.removeItem(user);
 
-  const handleCountrySelect = (e) => {
+    // Clear image from component state
+    setImageSrc("");
+    toast.success('Rmoved Photo successfully!', {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+  const handleCountrySelect = (e:any) => {
     setCountry(e.target.value);
     const selectedCountry = countries?.find(
       (ctr) => ctr.name === e.target.value
     );
     const selectedStates = selectedCountry?.states;
-    setStates(selectedStates);
+    if (selectedStates !== undefined) {
+      setStates(selectedStates);}
   };
 
-  const handleStateSelect = (e) => {
+  const handleStateSelect = (e:any) => {
     setUserState(e.target.value);
     const selectedState = states?.find((ctr) => ctr?.name === e.target.value);
     const selectedCity = selectedState?.cities;
-    setCities(selectedCity);
+    if (selectedCity !== undefined) {
+      setCities(selectedCity);
+      };
   };
 
   useEffect(() => {
     let key = session?.user?.email + "data";
     let userImg = session?.user?.email;
     const storedImage = localStorage.getItem(userImg || "");
-    const data = localStorage.getItem(key);
+    const data:any = localStorage.getItem(key);
     let userData = JSON.parse(data);
     if (data) {
       setUserData(JSON.parse(data));
@@ -89,7 +114,7 @@ const UserProfile = () => {
     }
   }, [session]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
     const email = e.target.email.value;
     const bio = e.target.bio.value;
@@ -108,18 +133,31 @@ const UserProfile = () => {
       state: state,
     };
     let key = email + "data";
+    updatePhotoChanged();
     localStorage.setItem(key, JSON.stringify(userData));
     if (imageSrc) {
       localStorage.setItem(email, imageSrc);
+      updatePhotoChanged();
     }
     setEditMode(false);
-    window.alert("Updated User Information successfully");
+    toast.success('User Updated successfully!', {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+
   };
   const handleEditClick = () => {
     setEditMode(!editMode);
   };
+
   return (
     <section>
+       <ToastContainer />
       <div
         className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 h-full w-full"
         style={mystyle}
@@ -172,7 +210,7 @@ const UserProfile = () => {
                     />
                   )}
                 </div>
-
+              
                 <input
                   className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                   id="file_input"
@@ -181,7 +219,17 @@ const UserProfile = () => {
                   onChange={handleFileChange}
                   disabled={!editMode}
                 />
+                
               </div>
+              <div>
+              <button
+                  onClick={handleRemovePhoto}
+                  className="w-30 text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-full font-medium text-sm px-5 py-2.5 text-center"
+                >
+                  Remove photo
+                </button>
+              </div>
+              
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Your phone no.
@@ -337,7 +385,7 @@ const UserProfile = () => {
                   </>
                 )}
               </div>
-              <p className="text-red-600 text-[16px] mb-4">{error && error}</p>
+           
 
               <button
                 type="submit"
