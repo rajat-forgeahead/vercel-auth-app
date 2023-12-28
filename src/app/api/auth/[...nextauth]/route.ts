@@ -32,9 +32,11 @@ import connect from "@/utils/db";
         }
       },
     }),
+  
     // ...add more providers here
   ],
+  secret: process.env.SECRET
 
 };
  const handler = NextAuth(authOptions);
- export { handler as GET, handler as POST, authOptions }
+ export { handler as GET, handler as POST }
