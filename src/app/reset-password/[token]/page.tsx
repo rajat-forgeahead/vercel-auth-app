@@ -67,7 +67,7 @@ try {
           },
           body: JSON.stringify({
                password,
-               email:user?.email,
+               email: session?.user?.email,
           }),
         });
         if (res.status === 400) {
