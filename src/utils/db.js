@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const connect = async () => {
-  const URL  = process.env.URL
+  const URL  = process.env.SECRET
   if (mongoose.connections[0].readyState) return;
 
   try {
