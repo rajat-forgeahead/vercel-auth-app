@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const connect = async () => {
-  const URL  = "mongodb+srv://rjtnamdev:hRvbh4mDfo5rcblv@cluster0.trsqyvl.mongodb.net/?retryWrites=true&w=majority"
+  const URL  = process.env.URL
   if (mongoose.connections[0].readyState) return;
 
   try {
