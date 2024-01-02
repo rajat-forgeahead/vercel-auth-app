@@ -48,18 +48,18 @@ const Navbar = () => {
           </Link>
           <li> {currentTheme === 'dark' ? (
             <button
-              className="bg-black-700 hover:bg-black w-20 rounded-md border-purple-400 border-2 p-4"
+              className="bg-black-700 hover:bg-black rounded-md border-none border-5 h-full"
               onClick={() => setTheme('light')}
             >
               {' '}
-              <img src="/images/sun.png" alt="logo" height="50px" width="50px" />
+              <img src="/images/sun.png" alt="logo" height="auto" width="auto" />
             </button>
           ) : (
             <button
-              className="bg-gray-100 w-20 rounded-md border-purple-400 border-2 p-4 hover:bg-gray-300"
+              className="bg-gray-100 rounded-md border-none border-2  hover:bg-gray-300 h-5"
               onClick={() => setTheme('dark')}
             >
-              <img src="/images/moon.png" alt="logo" height="50px" width="50px" />
+              <img src="/images/moon.png" alt="logo" height="auto" width="auto" />
             </button>
           )}</li>
           {!session ? (

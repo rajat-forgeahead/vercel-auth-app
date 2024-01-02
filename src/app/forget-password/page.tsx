@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import axios from "axios";
 
 const ForgetPassword = () => {
   const router = useRouter();
@@ -39,8 +40,8 @@ const ForgetPassword = () => {
       return;
     }
     try {
-        const res = await fetch("/api/forget-password", {
-          method: "POST",
+        const res = await axios.post("/api/forget-password", {
+       
           headers: {
             "Content-Type": "application/json",
           },

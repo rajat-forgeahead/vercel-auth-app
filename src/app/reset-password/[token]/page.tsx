@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const ResetPassword = ({params}:any) => {
   const router = useRouter();
@@ -60,8 +61,8 @@ try {
     const password = e.target[0].value;
  
     try {
-        const res = await fetch("/api/reset-password", {
-          method: "POST",
+        const res = await axios.post("/api/reset-password", {
+         
           headers: {
             "Content-Type": "application/json",
           },

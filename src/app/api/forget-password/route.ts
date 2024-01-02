@@ -6,7 +6,7 @@ import sgMail from "@sendgrid/mail"
 
 export const POST = async (request: NextRequest) => {
   const { email } = await request.json();
-  const SENDGRID_API_KEY = "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"
+  const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
 
   await connect();
 

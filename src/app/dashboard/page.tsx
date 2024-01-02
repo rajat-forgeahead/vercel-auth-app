@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import withAuth from "@/utils/session";
+import axios from "axios";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -17,11 +18,11 @@ const Dashboard = () => {
 
     const fetchRandomImages = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           'https://api.unsplash.com/photos/random?count=10&client_id=SI3vXMsWlVQkMyZBDfkTI8Ah1xgBzglIrPz42J3Ll5w'
         );
-        if (response.ok) {
-          const data = await response.json();
+        if (response) {
+          const data:any = await response;
           setImages(data);
         } else {
           console.error('Failed to fetch images');

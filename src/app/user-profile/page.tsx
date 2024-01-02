@@ -223,7 +223,7 @@ const [cities, setCities] = useState([] as string[]);
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  disabled={!editMode}
+
                 />
                 
               </div>

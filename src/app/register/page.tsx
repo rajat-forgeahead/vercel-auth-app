@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { countries } from "@/utils/countryData";
 import { useTheme } from "next-themes";
+import axios from "axios";
 const Register = () => {
   const [error, setError] = useState("");
   const router = useRouter();
@@ -72,6 +73,7 @@ const [cities, setCities] = useState([] as string[]);
   };
 
   const handleCountrySelect = (e: any) => {
+    e.preventDefault();
     const selectedCountry = countries?.find(
       (ctr) => ctr.name === e.target.value
     );
@@ -80,6 +82,7 @@ const [cities, setCities] = useState([] as string[]);
       setStates(selectedStates);}
   };
   const handleStateSelect = (e: any) => {
+    e.preventDefault();
     const selectedState = states?.find(
       (ctr: any) => ctr?.name === e.target.value
     );
@@ -133,8 +136,8 @@ const [cities, setCities] = useState([] as string[]);
     }
    
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
+      const res = await axios.post("/api/register", {
+       
         headers: {
           "Content-Type": "application/json",
         },

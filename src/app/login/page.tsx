@@ -59,7 +59,7 @@ const Login = () => {
         router.replace("/dashboard");
       }
     } else {
-      response.cookies.set("Loggedin", "");
+    
       setError("");
     }
   };
