@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
     "@sendgrid/mail": "^8.1.0",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
