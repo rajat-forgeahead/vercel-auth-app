@@ -8,6 +8,9 @@ import { useTheme } from "next-themes";
 import axios from "axios";
 const Register = () => {
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [pwdrror, setpwdError] = useState("");
+  const [addError, setAddError] = useState("");
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
   const [states, setStates] = useState([] as {
@@ -17,7 +20,6 @@ const Register = () => {
 const [cities, setCities] = useState([] as string[]); 
   const [email, setEmail] = useState("");
   const [file, setFile] = useState(null);
-  const [imageBase64, setImageBase64] = useState('');
   const [city, setCity] = useState();
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
@@ -35,7 +37,6 @@ const [cities, setCities] = useState([] as string[]);
       console.log("enail",email)
       reader.onloadend = () => {
         const base64String = reader.result.split(',')[1];
-        setImageBase64(base64String);
         // Save base64 string to local storage
         localStorage.setItem(email, base64String);
       };
@@ -92,90 +93,78 @@ const [cities, setCities] = useState([] as string[]);
       }
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-    const bio = e.target.bio.value;
-    const phone_number = e.target.phone_number.value;
-    const address = e.target.address.value;
-    const country = e.target.country.value;
-    const city = e.target.city.value;
-    const state = e.target.state.value;
-    const confirm_password = e.target.confirm_password.value;
-    const formData:any = new FormData();
-    formData.append('file', file);
-    if(password){
-      if(password!== confirm_password){
-       setError("Password is not matching");
-       return;
-      }
-    }
-  
-    if (file) {
-      const reader:any = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result.split(',')[1];
-        setImageBase64(base64String);
-        // Save base64 string to local storage
-        localStorage.setItem(email, base64String);
+ 
+
+const handleSubmit = async (e: any) => {
+  e.preventDefault();
+
+  const {
+    name,
+    email,
+    password,
+    bio,
+    phone_number,
+    address,
+    country,
+    city,
+    state,
+    confirm_password,
+  } = e.target;
+
+
+
+  if (password.value !== confirm_password.value) {
+    setEmailError("Password is not matching");
+    return;
+  }
+
+  if (!isValidEmail(email.value)) {
+    setEmailError("Email is invalid");
+    return;
+  }
+
+  if (!isValidPassword(password.value)) {
+    setpwdError("Password must be at least 8 characters long and contain at least one special character and one uppercase letter.");
+    return;
+  }
+
+  try {
+    const res = await axios.post("/api/register", {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      bio: bio.value,
+      phone_number: phone_number.value,
+      address: address.value,
+      country: country.value,
+      city: city.value,
+      state: state.value,
+    });
+
+    if (res.status === 400) {
+      setError("This email is already registered");
+    } else if (res.status === 200) {
+      setError("");
+      const userData = {
+        name:name.value,
+        email: email.value,
+        password: password.value,
+        bio: bio.value,
+        phone_number: phone_number.value,
+        address: address.value,
+        country: country.value,
+        city: city.value,
+        state: state.value,
       };
-      // reader.readAsDataURL(file);
+      let key = `${email.value}data`;
+      localStorage.setItem(key, JSON.stringify(userData));
+      router.push("/login");
     }
-    if (!isValidEmail(email)) {
-      setError("Email is invalid");
-      return;
-    }
-    if (!isValidPassword(password)) {
-      setError("Password must be at least 8 characters long and contain at least one special character and one uppercase letter.");
-      return;
-    }
-    if (!password || password.length < 8) {
-      setError("Password is invalid");
-      return;
-    }
-   
-    try {
-      const res = await axios.post("/api/register", {
-       
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          bio,
-          phone_number,
-          address,
-          country,
-          city,
-          state,
-        }),
-      });
-      const userData:any = {
-        email:  email,
-        password:password,
-        bio :bio,
-        phone_number:phone_number,
-        address :address,
-        country :country,
-        city :city,
-        state :state,
-        }
-        let key = email +"data"
-        localStorage.setItem(key,  JSON.stringify(userData));
-      if (res.status === 400) {
-        setError("This email is already registered");
-      }
-      if (res.status === 200) {
-        setError("");
-        router.push("/login");
-      }
-    } catch (error) {
-      setError("Error, try again");
-      console.log(error);
-    }
-  };
+  } catch (error) {
+    setError("Error, try again");
+    console.error(error);
+  }
+};
 
   if (sessionStatus === "loading") {
     return <h1>Loading...</h1>;
@@ -201,6 +190,22 @@ const [cities, setCities] = useState([] as string[]);
                 Sign up with new account
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+              <div>
+                 
+                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                   Your name
+                   <span style={{ color: 'red' }}>*</span>
+                 </label>
+                 
+                 <input
+                   type="text"
+                   name="name"
+                   id="name"
+                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="jhon doe"
+                   required
+                 />
+               </div>
                 <div>
                  
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -219,7 +224,9 @@ const [cities, setCities] = useState([] as string[]);
                     required
                   />
                 </div>
-               
+                <p className="text-red-600 text-[16px] mb-4">
+                  {emailError && emailError}
+                </p>
                 <div>
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                       Upload file
@@ -285,7 +292,7 @@ const [cities, setCities] = useState([] as string[]);
                   />
                 </div>
                 <p className="text-red-600 text-[16px] mb-4">
-                  {error && error}
+                  {pwdrror && pwdrror}
                 </p>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">

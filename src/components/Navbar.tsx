@@ -5,6 +5,7 @@ import { signOut, useSession } from "next-auth/react";
 import { deleteCookie } from "cookies-next";
 import {UserContext } from "@/utils/userContext"
 import { useTheme } from 'next-themes';
+import { Menu } from "@headlessui/react";
 const Navbar = () => {
   const { photoChanged } = useContext(UserContext);
   const { data: session } = useSession();
@@ -28,7 +29,7 @@ const Navbar = () => {
     }
   }, [session,photoChanged]);
   return (
-    <div className="">
+    <div className="border-b h-16 m-auto top-0 animated">
       
       {" "}
       {/* Added shadow */}
@@ -46,9 +47,11 @@ const Navbar = () => {
           <Link href="/dashboard">
             <li>Dashboard</li>
           </Link>
-          <li> {currentTheme === 'dark' ? (
+          <div>
+            <ul>
+            <li> {currentTheme === 'dark' ? (
             <button
-              className="bg-black-700 hover:bg-black rounded-md border-none border-5 h-full"
+              className="bg-black-700 rounded-md border-none border-5 h-full"
               onClick={() => setTheme('light')}
             >
               {' '}
@@ -56,12 +59,15 @@ const Navbar = () => {
             </button>
           ) : (
             <button
-              className="bg-gray-100 rounded-md border-none border-2  hover:bg-gray-300 h-5"
+              className="bg-gray-100 rounded-md border-none border-2"
               onClick={() => setTheme('dark')}
             >
               <img src="/images/moon.png" alt="logo" height="auto" width="auto" />
             </button>
           )}</li>
+            </ul>
+          </div>
+         
           {!session ? (
             <>
               <Link href="/login">
@@ -75,16 +81,15 @@ const Navbar = () => {
           ) : (
             <>
               <Link href="/user-profile">
-          
-              <li>
-                <img
-                  className="w-10 h-10 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
-                  src={`data:image/png;base64,${imageSrc}`}
-                  alt="Bordered avatar"
-                />
-              </li>
+              {currentTheme === 'dark' ? (
+              <img className="w-8 h-8 mr-2" src="/images/gear.png" alt="logo" />):(<img className="w-8 h-8 mr-2" src="/images/settings.png" alt="logo" />)}
               </Link>
-              
+              <Menu >
+              <Menu.Button className="text-blue-600">
+                    {session?.user?.email}
+                  </Menu.Button>
+                  
+              </Menu>
               <li>
                 <button
                   onClick={() => {

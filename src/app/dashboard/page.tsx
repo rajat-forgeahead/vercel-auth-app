@@ -21,9 +21,8 @@ const Dashboard = () => {
         const response = await axios.get(
           'https://api.unsplash.com/photos/random?count=10&client_id=SI3vXMsWlVQkMyZBDfkTI8Ah1xgBzglIrPz42J3Ll5w'
         );
-        if (response) {
-          const data:any = await response;
-          setImages(data);
+        if (response.data) {
+          setImages(response.data);
         } else {
           console.error('Failed to fetch images');
         }
@@ -31,7 +30,6 @@ const Dashboard = () => {
         console.error('Error fetching images:', error);
       }
     };
-
     fetchRandomImages();
   }, [sessionStatus, router]);
 
