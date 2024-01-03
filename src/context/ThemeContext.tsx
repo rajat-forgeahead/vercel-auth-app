@@ -9,11 +9,8 @@ const ThemeContext = createContext({
 });
 
 const ThemeContextProvider = ({ children }: any) => {
-  const [theme, setTheme] = useState("light");
 
-  const toggleTheme = () => {
-    setTheme((curr) => (curr === "light" ? "dark" : "light"));
-  };
+
 
   return (
     <ThemeProvider enableSystem={true} attribute="class">
@@ -22,4 +19,4 @@ const ThemeContextProvider = ({ children }: any) => {
   );
 };
 
-export { ThemeContext, ThemeProvider };
+export { ThemeContext, ThemeProvider ,ThemeContextProvider};

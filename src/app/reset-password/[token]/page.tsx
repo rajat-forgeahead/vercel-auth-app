@@ -9,7 +9,6 @@ const ResetPassword = ({params}:any) => {
   const router = useRouter();
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
-  const [user, setUser] = useState(null);
   // const session = useSession();
   const { data: session, status: sessionStatus } = useSession();
   useEffect(()=>{
@@ -32,8 +31,6 @@ try {
         if (res.status === 200) {
           setError("");
           setVerified(true);
-          const userData = await res.json();
-          setUser(userData)
           // router.push("/login");
         }
       } catch (error) {

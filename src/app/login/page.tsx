@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { setCookie } from "cookies-next";
 import { useTheme } from 'next-themes';
 const Login = () => {

@@ -7,9 +7,8 @@ import axios from "axios";
 
 const Dashboard = () => {
   const router = useRouter();
-  const [error, setError] = useState("");
   // const session = useSession();
-  const { data: session, status: sessionStatus } = useSession();
+  const { status: sessionStatus } = useSession();
   const [images, setImages] = useState([]);
   useEffect(() => {
     // if (!session) {

@@ -2,7 +2,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useSession } from "next-auth/react";
 import { countries } from "@/utils/countryData";
-import { useRouter } from "next/router";
 import withAuth from "@/utils/session";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,7 +10,6 @@ import { useTheme } from "next-themes";
 
 const UserProfile = () => {
   const { updatePhotoChanged } = useContext(UserContext);
-  const [userData, setUserData] = useState({});
   const { data: session } = useSession();
   const [states, setStates] = useState([] as {
     name: string;
@@ -29,7 +27,7 @@ const [cities, setCities] = useState([] as string[]);
   const [editMode, setEditMode] = useState(false);
   const darkModeClass = 'text-white';
   const lightModeClass = 'text-black';
-  const { systemTheme, theme, setTheme } = useTheme();
+  const { systemTheme, theme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
   // Conditionally set the text color class based on the current theme
   const textColorClass = currentTheme === 'dark' ? darkModeClass : lightModeClass;
@@ -104,7 +102,6 @@ const [cities, setCities] = useState([] as string[]);
     const data:any = localStorage.getItem(key);
     let userData = JSON.parse(data);
     if (data) {
-      setUserData(JSON.parse(data));
       setEmail(userData.email);
       setBio(userData.bio);
       setAddress(userData.address);

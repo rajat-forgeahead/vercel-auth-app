@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import axios from "axios";
@@ -9,7 +9,7 @@ import axios from "axios";
 const ForgetPassword = () => {
   const router = useRouter();
   const [error, setError] = useState("");
-  const { systemTheme, theme, setTheme } = useTheme();
+  const { systemTheme, theme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const darkModeClass = 'text-white';
   const lightModeClass = 'text-black';

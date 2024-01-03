@@ -10,7 +10,6 @@ const Register = () => {
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [pwdrror, setpwdError] = useState("");
-  const [addError, setAddError] = useState("");
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
   const [states, setStates] = useState([] as {
@@ -21,7 +20,7 @@ const [cities, setCities] = useState([] as string[]);
   const [email, setEmail] = useState("");
   const [file, setFile] = useState(null);
   const [city, setCity] = useState();
-  const { systemTheme, theme, setTheme } = useTheme();
+  const { systemTheme, theme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const darkModeClass = 'text-white';
   const lightModeClass = 'text-black';
