@@ -198,7 +198,7 @@ const Login = () => {
           )}
         </div>
                 <button
-                disabled={!enableLogin}
+                // disabled={!enableLogin}
                   type="submit"
                   className={`w-full h-10 rounded font-semibold text-white hover:bg-blue-700 
                   ${!enableLogin ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500'}`}
