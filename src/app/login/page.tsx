@@ -7,21 +7,17 @@ import { NextResponse } from "next/server";
 import { setCookie } from "cookies-next";
 import { useTheme } from "next-themes";
 import { phoneAuth, validateSMS } from '../helper/utils';
-import Head from 'next/head';
-import axios from "axios";
 const Login = () => {
   const response = NextResponse.next();
   const router = useRouter();
   const [error, setError] = useState("");
   const[enableLogin,setEnableLogin]=useState(false);
-  const [textColor, setColor] = useState("black");
   // const session = useSession();
   const { data: session, status: sessionStatus } = useSession();
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === "system" ? systemTheme : theme;
   const darkModeClass = "text-white";
   const lightModeClass = "text-black";
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [value, setValue] = useState({
     phone: '',
     otp: '',
