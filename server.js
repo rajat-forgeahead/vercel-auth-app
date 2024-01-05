@@ -13,7 +13,7 @@ app.prepare().then(() => {
     const { pathname, query } = parsedUrl;
 
     // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', 'https://vercel-auth-mbr3py75s-rajat-namdevs-projects.vercel.app');
+    res.setHeader('Access-Control-Allow-Origin', 'https://vercel-auth-app.vercel.app');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 
